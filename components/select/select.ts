@@ -121,6 +121,7 @@ let optionsTemplate = `
   <div tabindex="0"
      *ngIf="multiple === false"
      (keyup)="mainClick($event)"
+     (focus)="showInput($event)"
      [offClick]="clickedOutside"
      class="ui-select-container dropdown open">
     <div [ngClass]="{'ui-disabled': disabled}"></div>
@@ -145,6 +146,7 @@ let optionsTemplate = `
     <input type="text" autocomplete="false" tabindex="-1"
            (keydown)="inputEvent($event)"
            (keyup)="inputEvent($event, true)"
+           (blur)="hideInput($event)"
            [disabled]="disabled"
            class="form-control ui-select-search"
            *ngIf="inputMode"
@@ -221,6 +223,7 @@ export class SelectComponent implements OnInit {
   public activeOption:SelectItem;
   public element:ElementRef;
 
+  private preventInputFocus:boolean = false;
   private inputMode:boolean = false;
   private optionsOpened:boolean = false;
   private behavior:OptionsBehavior;
@@ -231,6 +234,25 @@ export class SelectComponent implements OnInit {
   public constructor(element:ElementRef) {
     this.element = element;
     this.clickedOutside = this.clickedOutside.bind(this);
+  }
+
+  public showInput(e:any):void {
+    if (this.preventInputFocus === true) {
+      this.preventInputFocus = false;
+      return;
+    }
+    if (this.autocomplete === true) {
+      this.inputMode = true;
+      if (this.inputMode === true && ((this.multiple === true && e) || this.multiple === false)) {
+        this.focusToInput();
+      }
+    }
+  }
+
+  public hideInput(e:any):void {
+    if(this.optionsOpened === false && this.inputMode === true) {
+        this.inputMode = false;
+    }
   }
 
   public inputEvent(e:any, isUpMode:boolean = false):void {
@@ -303,6 +325,10 @@ export class SelectComponent implements OnInit {
     }
     if (e.srcElement && e.srcElement.value) {
       this.inputValue = e.srcElement.value;
+      if (this.optionsOpened === false) {
+        this.focusToInput(this.inputValue);
+        this.open();
+      }
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
     }
@@ -459,6 +485,7 @@ export class SelectComponent implements OnInit {
     if (this.multiple === true) {
       this.focusToInput('');
     } else {
+      this.preventInputFocus = true;
       this.focusToInput(stripTags(value.text));
       this.element.nativeElement.querySelector('.ui-select-container').focus();
     }
