@@ -156,7 +156,7 @@ let optionsTemplate = `
            [disabled]="disabled"
            class="form-control ui-select-search"
            *ngIf="inputMode"
-           placeholder="{{active.length <= 0 ? placeholder : ''}}">
+           placeholder="{{activeOption ? activeOption.text : placeholder}}">
       ${optionsTemplate}
   </div>
 
