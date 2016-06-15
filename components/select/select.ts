@@ -203,6 +203,7 @@ export class SelectComponent implements OnInit {
   @Input() public initData:Array<any> = [];
   @Input() public multiple:boolean = false;
   @Input() public autocomplete:boolean = false;
+  @Input() public searchItems:Array<any> = [];
 
   @Input()
   public set items(value:Array<any>) {
@@ -426,10 +427,24 @@ export class SelectComponent implements OnInit {
       if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122)) {
         clearTimeout(this.searchTimeout);
         this.searchText += event.key;
-        let opt = this.options.find((el:any) => {
-          let text = (el.search) ? el.search.toLowerCase() : el.text.toLowerCase();
-          return text.startsWith(this.searchText.toLowerCase());
-        });
+        let item:any;
+        if (this.searchItems.length) {
+           item = this.searchItems.find(it => {
+            let search =  it.search.toLowerCase();
+            return search.startsWith(this.searchText.toLowerCase());
+          });
+        }
+        let opt:SelectItem;
+        if (item) {
+          opt = this.options.find((el:SelectItem) => {
+            return el.id == item.id;
+          });
+        } else {
+          opt = this.options.find((el:SelectItem) => {
+            let text =  el.text.toLowerCase();
+            return text.startsWith(this.searchText.toLowerCase());
+          });
+        }
         if (opt) {
           this.activeOption = opt;
           this.behavior.updateHighlighted();
