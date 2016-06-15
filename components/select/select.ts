@@ -427,7 +427,7 @@ export class SelectComponent implements OnInit {
         clearTimeout(this.searchTimeout);
         this.searchText += event.key;
         let opt = this.options.find(el => {
-          let text = el.text.toLowerCase();
+          let text = (el.search) ? el.search.toLowerCase() : el.text.toLowerCase();
           return text.startsWith(this.searchText.toLowerCase());
         });
         if (opt) {
