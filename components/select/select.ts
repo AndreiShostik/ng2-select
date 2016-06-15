@@ -426,7 +426,7 @@ export class SelectComponent implements OnInit {
       if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122)) {
         clearTimeout(this.searchTimeout);
         this.searchText += event.key;
-        let opt = this.options.find(el => {
+        let opt = this.options.find((el:any) => {
           let text = (el.search) ? el.search.toLowerCase() : el.text.toLowerCase();
           return text.startsWith(this.searchText.toLowerCase());
         });
