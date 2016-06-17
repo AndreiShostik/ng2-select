@@ -12,3 +12,6 @@ demo
 demo-build
 webpack.config.js
 
+#typescript sources
+*.ts
+!*.d.ts
