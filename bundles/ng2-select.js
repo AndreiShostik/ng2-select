@@ -240,7 +240,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     Object.defineProperty(SelectComponent.prototype, "items", {
       set: function(value) {
         var _this = this;
-        this._items = value;
+        this._items = value || [];
         this.itemObjects = this._items.map(function(item) {
           return (typeof item === 'string' ? new select_item_1.SelectItem(item) : new select_item_1.SelectItem({
             id: item[_this.idField],
