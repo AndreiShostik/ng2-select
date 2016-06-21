@@ -297,18 +297,15 @@ export class SelectComponent implements OnInit {
       if (this.active.length > 0) {
         this.remove(this.active[this.active.length - 1]);
       }
-      e.preventDefault();
     }
     // left
     if (!isUpMode && e.keyCode === 37 && this._items.length > 0) {
       this.behavior.first();
-      e.preventDefault();
       return;
     }
     // right
     if (!isUpMode && e.keyCode === 39 && this._items.length > 0) {
       this.behavior.last();
-      e.preventDefault();
       return;
     }
     // up
