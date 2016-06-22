@@ -316,7 +316,20 @@ export class SelectComponent implements OnInit {
     if (!isUpMode && e.keyCode === 46) {
       if (this.active.length > 0) {
         this.remove(this.active[this.active.length - 1]);
+        if (this.autocomplete === true) {
+          this.inputMode = true;
+          this.focusToInput('');
+        } else {
+          setTimeout(() => {
+            let el = this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+            if (el) {
+              el.focus();
+            }
+          }, 0);
+        }
+        this.open();
       }
+      return;
     }
     // left
     if (!isUpMode && e.keyCode === 37 && this._items.length > 0) {
@@ -349,11 +362,11 @@ export class SelectComponent implements OnInit {
       e.preventDefault();
       return;
     }
-    if (e.srcElement && e.srcElement.value) {
+    if (e.srcElement && e.srcElement.value !== undefined) {
       this.inputValue = e.srcElement.value;
-      if (this.optionsOpened === false) {
-        this.focusToInput(this.inputValue);
+      if (this.optionsOpened === false && this.inputValue) {
         this.open();
+        this.focusToInput(this.inputValue);
       }
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
