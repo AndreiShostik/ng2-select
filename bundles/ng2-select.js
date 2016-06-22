@@ -215,7 +215,6 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       this.placeholder = '';
       this.idField = 'id';
       this.textField = 'text';
-      this.initData = [];
       this.multiple = false;
       this.autocomplete = false;
       this.searchItems = [];
@@ -225,13 +224,13 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       this.typed = new core_1.EventEmitter();
       this.options = [];
       this.itemObjects = [];
-      this.active = [];
       this.preventInputFocus = false;
       this.inputMode = false;
       this.optionsOpened = false;
       this.inputValue = '';
       this._items = [];
       this._disabled = false;
+      this._active = [];
       this.searchText = '';
       this.searchTimeout = 0;
       this.element = element;
@@ -261,6 +260,28 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       enumerable: true,
       configurable: true
     });
+    Object.defineProperty(SelectComponent.prototype, "active", {
+      get: function() {
+        return this._active;
+      },
+      set: function(selectedItems) {
+        var _this = this;
+        if (!selectedItems || selectedItems.length === 0) {
+          this._active = [];
+        } else {
+          var areItemsStrings_1 = typeof selectedItems[0] === 'string';
+          this._active = selectedItems.map(function(item) {
+            var data = areItemsStrings_1 ? item : {
+              id: item[_this.idField],
+              text: item[_this.textField]
+            };
+            return new select_item_1.SelectItem(data);
+          });
+        }
+      },
+      enumerable: true,
+      configurable: true
+    });
     SelectComponent.prototype.showInput = function(e) {
       if (this.preventInputFocus === true) {
         this.preventInputFocus = false;
@@ -279,6 +300,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       }
     };
     SelectComponent.prototype.inputEvent = function(e, isUpMode) {
+      var _this = this;
       if (isUpMode === void 0) {
         isUpMode = false;
       }
@@ -307,17 +329,27 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       if (!isUpMode && e.keyCode === 46) {
         if (this.active.length > 0) {
           this.remove(this.active[this.active.length - 1]);
+          if (this.autocomplete === true) {
+            this.inputMode = true;
+            this.focusToInput('');
+          } else {
+            setTimeout(function() {
+              var el = _this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+              if (el) {
+                el.focus();
+              }
+            }, 0);
+          }
+          this.open();
         }
-        e.preventDefault();
+        return;
       }
       if (!isUpMode && e.keyCode === 37 && this._items.length > 0) {
         this.behavior.first();
-        e.preventDefault();
         return;
       }
       if (!isUpMode && e.keyCode === 39 && this._items.length > 0) {
         this.behavior.last();
-        e.preventDefault();
         return;
       }
       if (!isUpMode && e.keyCode === 38) {
@@ -338,28 +370,18 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
         e.preventDefault();
         return;
       }
-      if (e.srcElement && e.srcElement.value) {
+      if (e.srcElement && e.srcElement.value !== undefined) {
         this.inputValue = e.srcElement.value;
-        if (this.optionsOpened === false) {
-          this.focusToInput(this.inputValue);
+        if (this.optionsOpened === false && this.inputValue) {
           this.open();
+          this.focusToInput(this.inputValue);
         }
         this.behavior.filter(new RegExp(common_1.escapeRegexp(this.inputValue), 'ig'));
         this.doEvent('typed', this.inputValue);
       }
     };
     SelectComponent.prototype.ngOnInit = function() {
-      var _this = this;
       this.behavior = (this.firstItemHasChildren) ? new ChildrenBehavior(this) : new GenericBehavior(this);
-      if (this.initData) {
-        this.active = this.initData.map(function(data) {
-          return (typeof data === 'string' ? new select_item_1.SelectItem(data) : new select_item_1.SelectItem({
-            id: data[_this.idField],
-            text: data[_this.textField]
-          }));
-        });
-        this.data.emit(this.active);
-      }
     };
     SelectComponent.prototype.remove = function(item) {
       if (this._disabled === true) {
@@ -540,12 +562,12 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     __decorate([core_1.Input(), __metadata('design:type', String)], SelectComponent.prototype, "placeholder", void 0);
     __decorate([core_1.Input(), __metadata('design:type', String)], SelectComponent.prototype, "idField", void 0);
     __decorate([core_1.Input(), __metadata('design:type', String)], SelectComponent.prototype, "textField", void 0);
-    __decorate([core_1.Input(), __metadata('design:type', Array)], SelectComponent.prototype, "initData", void 0);
     __decorate([core_1.Input(), __metadata('design:type', Boolean)], SelectComponent.prototype, "multiple", void 0);
     __decorate([core_1.Input(), __metadata('design:type', Boolean)], SelectComponent.prototype, "autocomplete", void 0);
     __decorate([core_1.Input(), __metadata('design:type', Array)], SelectComponent.prototype, "searchItems", void 0);
     __decorate([core_1.Input(), __metadata('design:type', Array), __metadata('design:paramtypes', [Array])], SelectComponent.prototype, "items", null);
     __decorate([core_1.Input(), __metadata('design:type', Boolean), __metadata('design:paramtypes', [Boolean])], SelectComponent.prototype, "disabled", null);
+    __decorate([core_1.Input(), __metadata('design:type', Array), __metadata('design:paramtypes', [Array])], SelectComponent.prototype, "active", null);
     __decorate([core_1.Output(), __metadata('design:type', core_1.EventEmitter)], SelectComponent.prototype, "data", void 0);
     __decorate([core_1.Output(), __metadata('design:type', core_1.EventEmitter)], SelectComponent.prototype, "selected", void 0);
     __decorate([core_1.Output(), __metadata('design:type', core_1.EventEmitter)], SelectComponent.prototype, "removed", void 0);

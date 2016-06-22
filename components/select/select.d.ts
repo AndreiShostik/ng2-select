@@ -6,19 +6,18 @@ export declare class SelectComponent implements OnInit {
     placeholder: string;
     idField: string;
     textField: string;
-    initData: Array<any>;
     multiple: boolean;
     autocomplete: boolean;
     searchItems: Array<any>;
     items: Array<any>;
     disabled: boolean;
+    active: Array<any>;
     data: EventEmitter<any>;
     selected: EventEmitter<any>;
     removed: EventEmitter<any>;
     typed: EventEmitter<any>;
     options: Array<SelectItem>;
     itemObjects: Array<SelectItem>;
-    active: Array<SelectItem>;
     activeOption: SelectItem;
     element: ElementRef;
     private preventInputFocus;
@@ -28,6 +27,7 @@ export declare class SelectComponent implements OnInit {
     private inputValue;
     private _items;
     private _disabled;
+    private _active;
     private searchText;
     private searchTimeout;
     constructor(element: ElementRef);
