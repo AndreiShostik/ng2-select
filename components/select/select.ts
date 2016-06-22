@@ -200,7 +200,6 @@ export class SelectComponent implements OnInit {
   @Input() public placeholder:string = '';
   @Input() public idField:string = 'id';
   @Input() public textField:string = 'text';
-  @Input() public initData:Array<any> = [];
   @Input() public multiple:boolean = false;
   @Input() public autocomplete:boolean = false;
   @Input() public searchItems:Array<any> = [];
@@ -219,6 +218,23 @@ export class SelectComponent implements OnInit {
     }
   }
 
+@Input()
+  public set active(selectedItems:Array<any>) {
+      if (!selectedItems || selectedItems.length === 0) {
+          this._active = [];
+        } else {
+          let areItemsStrings = typeof selectedItems[0] === 'string';
+
+            this._active = selectedItems.map((item:any) => {
+              let data = areItemsStrings
+                ? item
+                : { id: item[this.idField], text: item[this.textField] };
+
+                return new SelectItem(data);
+            });
+        }
+    }
+
   @Output() public data:EventEmitter<any> = new EventEmitter();
   @Output() public selected:EventEmitter<any> = new EventEmitter();
   @Output() public removed:EventEmitter<any> = new EventEmitter();
@@ -226,9 +242,12 @@ export class SelectComponent implements OnInit {
 
   public options:Array<SelectItem> = [];
   public itemObjects:Array<SelectItem> = [];
-  public active:Array<SelectItem> = [];
   public activeOption:SelectItem;
   public element:ElementRef;
+
+  public get active():Array<any> {
+    return this._active;
+  }
 
   private preventInputFocus:boolean = false;
   private inputMode:boolean = false;
@@ -237,6 +256,7 @@ export class SelectComponent implements OnInit {
   private inputValue:string = '';
   private _items:Array<any> = [];
   private _disabled:boolean = false;
+  private _active:Array<SelectItem> = [];
   private searchText:string = '';
   private searchTimeout:number = 0;
 
@@ -296,19 +316,29 @@ export class SelectComponent implements OnInit {
     if (!isUpMode && e.keyCode === 46) {
       if (this.active.length > 0) {
         this.remove(this.active[this.active.length - 1]);
+        if (this.autocomplete === true) {
+          this.inputMode = true;
+          this.focusToInput('');
+        } else {
+          setTimeout(() => {
+            let el = this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+            if (el) {
+              el.focus();
+            }
+          }, 0);
+        }
+        this.open();
       }
-      e.preventDefault();
+      return;
     }
     // left
     if (!isUpMode && e.keyCode === 37 && this._items.length > 0) {
       this.behavior.first();
-      e.preventDefault();
       return;
     }
     // right
     if (!isUpMode && e.keyCode === 39 && this._items.length > 0) {
       this.behavior.last();
-      e.preventDefault();
       return;
     }
     // up
@@ -332,11 +362,11 @@ export class SelectComponent implements OnInit {
       e.preventDefault();
       return;
     }
-    if (e.srcElement && e.srcElement.value) {
+    if (e.srcElement && e.srcElement.value !== undefined) {
       this.inputValue = e.srcElement.value;
-      if (this.optionsOpened === false) {
-        this.focusToInput(this.inputValue);
+      if (this.optionsOpened === false && this.inputValue) {
         this.open();
+        this.focusToInput(this.inputValue);
       }
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
@@ -346,10 +376,6 @@ export class SelectComponent implements OnInit {
   public ngOnInit():any {
     this.behavior = (this.firstItemHasChildren) ?
       new ChildrenBehavior(this) : new GenericBehavior(this);
-    if (this.initData) {
-      this.active = this.initData.map((data:any) => (typeof data === 'string' ? new SelectItem(data) : new SelectItem({id: data[this.idField], text: data[this.textField]})));
-      this.data.emit(this.active);
-    }
   }
 
   public remove(item:SelectItem):void {
