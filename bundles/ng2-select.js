@@ -239,17 +239,21 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     Object.defineProperty(SelectComponent.prototype, "items", {
       set: function(value) {
         var _this = this;
-        this._items = value.filter(function(item) {
-          if ((typeof item === 'string' && item) || (typeof item === 'object' && item && item.text && item.id)) {
-            return item;
-          }
-        });
-        this.itemObjects = this._items.map(function(item) {
-          return (typeof item === 'string' ? new select_item_1.SelectItem(item) : new select_item_1.SelectItem({
-            id: item[_this.idField],
-            text: item[_this.textField]
-          }));
-        });
+        if (!value) {
+          this._items = this.itemObjects = [];
+        } else {
+          this._items = value.filter(function(item) {
+            if ((typeof item === 'string' && item) || (typeof item === 'object' && item && item.text && item.id)) {
+              return item;
+            }
+          });
+          this.itemObjects = this._items.map(function(item) {
+            return (typeof item === 'string' ? new select_item_1.SelectItem(item) : new select_item_1.SelectItem({
+              id: item[_this.idField],
+              text: item[_this.textField]
+            }));
+          });
+        }
       },
       enumerable: true,
       configurable: true
