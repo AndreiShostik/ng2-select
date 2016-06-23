@@ -206,7 +206,11 @@ export class SelectComponent implements OnInit {
 
   @Input()
   public set items(value:Array<any>) {
-    this._items = value;
+    this._items = value.filter((item:any) => {
+      if ((typeof item === 'string' && item) || (typeof item === 'object' && item && item.text && item.id)) {
+        return item;
+      }
+    });
     this.itemObjects = this._items.map((item:any) => (typeof item === 'string' ? new SelectItem(item) : new SelectItem({id: item[this.idField], text: item[this.textField]})));
   }
 
@@ -362,8 +366,9 @@ export class SelectComponent implements OnInit {
       e.preventDefault();
       return;
     }
-    if (e.srcElement && e.srcElement.value !== undefined) {
-      this.inputValue = e.srcElement.value;
+    let target = e.target || e.srcElement;
+    if (target && target.value !== undefined) {
+      this.inputValue = target.value;
       if (this.optionsOpened === false && this.inputValue) {
         this.open();
         this.focusToInput(this.inputValue);
@@ -486,7 +491,8 @@ export class SelectComponent implements OnInit {
       .toLowerCase();
     this.focusToInput(value);
     this.open();
-    event.srcElement.value = value;
+    let target = event.target || event.srcElement;
+    target.value = value;
     this.inputEvent(event);
   }
 
