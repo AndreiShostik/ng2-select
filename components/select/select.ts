@@ -366,8 +366,9 @@ export class SelectComponent implements OnInit {
       e.preventDefault();
       return;
     }
-    if (e.srcElement && e.srcElement.value !== undefined) {
-      this.inputValue = e.srcElement.value;
+    let target = e.target || e.srcElement;
+    if (target && target.value !== undefined) {
+      this.inputValue = target.value;
       if (this.optionsOpened === false && this.inputValue) {
         this.open();
         this.focusToInput(this.inputValue);
@@ -490,7 +491,8 @@ export class SelectComponent implements OnInit {
       .toLowerCase();
     this.focusToInput(value);
     this.open();
-    event.srcElement.value = value;
+    let target = event.target || event.srcElement;
+    target.value = value;
     this.inputEvent(event);
   }
 
