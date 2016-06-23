@@ -239,7 +239,11 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     Object.defineProperty(SelectComponent.prototype, "items", {
       set: function(value) {
         var _this = this;
-        this._items = value || [];
+        this._items = value.filter(function(item) {
+          if ((typeof item === 'string' && item) || (typeof item === 'object' && item && item.text && item.id)) {
+            return item;
+          }
+        });
         this.itemObjects = this._items.map(function(item) {
           return (typeof item === 'string' ? new select_item_1.SelectItem(item) : new select_item_1.SelectItem({
             id: item[_this.idField],
@@ -370,8 +374,9 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
         e.preventDefault();
         return;
       }
-      if (e.srcElement && e.srcElement.value !== undefined) {
-        this.inputValue = e.srcElement.value;
+      var target = e.target || e.srcElement;
+      if (target && target.value !== undefined) {
+        this.inputValue = target.value;
         if (this.optionsOpened === false && this.inputValue) {
           this.open();
           this.focusToInput(this.inputValue);
@@ -488,7 +493,8 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       var value = String.fromCharCode(96 <= event.keyCode && event.keyCode <= 105 ? event.keyCode - 48 : event.keyCode).toLowerCase();
       this.focusToInput(value);
       this.open();
-      event.srcElement.value = value;
+      var target = event.target || event.srcElement;
+      target.value = value;
       this.inputEvent(event);
     };
     SelectComponent.prototype.selectActive = function(value) {
