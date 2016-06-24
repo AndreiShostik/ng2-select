@@ -202,7 +202,16 @@ export class SelectComponent implements OnInit {
   @Input() public textField:string = 'text';
   @Input() public multiple:boolean = false;
   @Input() public autocomplete:boolean = false;
-  @Input() public searchItems:Array<any> = [];
+
+  @Input()
+  public set searchItems(value:Array<any>) {
+    value = value || [];
+    this._searchItems = value.filter((item:any) => {
+      if (item && item.search && item.id) {
+        return item;
+      }
+    });
+  };
 
   @Input()
   public set items(value:Array<any>) {
@@ -263,6 +272,7 @@ export class SelectComponent implements OnInit {
   private behavior:OptionsBehavior;
   private inputValue:string = '';
   private _items:Array<any> = [];
+  private _searchItems:Array<any> = [];
   private _disabled:boolean = false;
   private _active:Array<SelectItem> = [];
   private searchText:string = '';
@@ -463,8 +473,8 @@ export class SelectComponent implements OnInit {
         clearTimeout(this.searchTimeout);
         this.searchText += event.key;
         let item:any;
-        if (this.searchItems.length) {
-           item = this.searchItems.find(it => {
+        if (this._searchItems.length) {
+           item = this._searchItems.find(it => {
             let search =  it.search.toLowerCase();
             return search.startsWith(this.searchText.toLowerCase());
           });
