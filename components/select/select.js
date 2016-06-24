@@ -28,7 +28,6 @@ var SelectComponent = (function () {
         this.textField = 'text';
         this.multiple = false;
         this.autocomplete = false;
-        this.searchItems = [];
         this.data = new core_1.EventEmitter();
         this.selected = new core_1.EventEmitter();
         this.removed = new core_1.EventEmitter();
@@ -40,6 +39,7 @@ var SelectComponent = (function () {
         this.optionsOpened = false;
         this.inputValue = '';
         this._items = [];
+        this._searchItems = [];
         this._disabled = false;
         this._active = [];
         this.searchText = '';
@@ -47,6 +47,19 @@ var SelectComponent = (function () {
         this.element = element;
         this.clickedOutside = this.clickedOutside.bind(this);
     }
+    Object.defineProperty(SelectComponent.prototype, "searchItems", {
+        set: function (value) {
+            value = value || [];
+            this._searchItems = value.filter(function (item) {
+                if (item && item.search && item.id) {
+                    return item;
+                }
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     Object.defineProperty(SelectComponent.prototype, "items", {
         set: function (value) {
             var _this = this;
@@ -287,8 +300,8 @@ var SelectComponent = (function () {
                 clearTimeout(this.searchTimeout);
                 this.searchText += event.key;
                 var item_1;
-                if (this.searchItems.length) {
-                    item_1 = this.searchItems.find(function (it) {
+                if (this._searchItems.length) {
+                    item_1 = this._searchItems.find(function (it) {
                         var search = it.search.toLowerCase();
                         return search.startsWith(_this.searchText.toLowerCase());
                     });
@@ -413,8 +426,9 @@ var SelectComponent = (function () {
     ], SelectComponent.prototype, "autocomplete", void 0);
     __decorate([
         core_1.Input(), 
-        __metadata('design:type', Array)
-    ], SelectComponent.prototype, "searchItems", void 0);
+        __metadata('design:type', Array), 
+        __metadata('design:paramtypes', [Array])
+    ], SelectComponent.prototype, "searchItems", null);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array), 

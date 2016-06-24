@@ -26,6 +26,7 @@ export declare class SelectComponent implements OnInit {
     private behavior;
     private inputValue;
     private _items;
+    private _searchItems;
     private _disabled;
     private _active;
     private searchText;

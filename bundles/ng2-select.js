@@ -217,7 +217,6 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       this.textField = 'text';
       this.multiple = false;
       this.autocomplete = false;
-      this.searchItems = [];
       this.data = new core_1.EventEmitter();
       this.selected = new core_1.EventEmitter();
       this.removed = new core_1.EventEmitter();
@@ -229,6 +228,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       this.optionsOpened = false;
       this.inputValue = '';
       this._items = [];
+      this._searchItems = [];
       this._disabled = false;
       this._active = [];
       this.searchText = '';
@@ -236,6 +236,19 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       this.element = element;
       this.clickedOutside = this.clickedOutside.bind(this);
     }
+    Object.defineProperty(SelectComponent.prototype, "searchItems", {
+      set: function(value) {
+        value = value || [];
+        this._searchItems = value.filter(function(item) {
+          if (item && item.search && item.id) {
+            return item;
+          }
+        });
+      },
+      enumerable: true,
+      configurable: true
+    });
+    ;
     Object.defineProperty(SelectComponent.prototype, "items", {
       set: function(value) {
         var _this = this;
@@ -467,8 +480,8 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
           clearTimeout(this.searchTimeout);
           this.searchText += event.key;
           var item_1;
-          if (this.searchItems.length) {
-            item_1 = this.searchItems.find(function(it) {
+          if (this._searchItems.length) {
+            item_1 = this._searchItems.find(function(it) {
               var search = it.search.toLowerCase();
               return search.startsWith(_this.searchText.toLowerCase());
             });
@@ -574,7 +587,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     __decorate([core_1.Input(), __metadata('design:type', String)], SelectComponent.prototype, "textField", void 0);
     __decorate([core_1.Input(), __metadata('design:type', Boolean)], SelectComponent.prototype, "multiple", void 0);
     __decorate([core_1.Input(), __metadata('design:type', Boolean)], SelectComponent.prototype, "autocomplete", void 0);
-    __decorate([core_1.Input(), __metadata('design:type', Array)], SelectComponent.prototype, "searchItems", void 0);
+    __decorate([core_1.Input(), __metadata('design:type', Array), __metadata('design:paramtypes', [Array])], SelectComponent.prototype, "searchItems", null);
     __decorate([core_1.Input(), __metadata('design:type', Array), __metadata('design:paramtypes', [Array])], SelectComponent.prototype, "items", null);
     __decorate([core_1.Input(), __metadata('design:type', Boolean), __metadata('design:paramtypes', [Boolean])], SelectComponent.prototype, "disabled", null);
     __decorate([core_1.Input(), __metadata('design:type', Array), __metadata('design:paramtypes', [Array])], SelectComponent.prototype, "active", null);
