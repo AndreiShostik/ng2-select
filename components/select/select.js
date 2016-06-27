@@ -143,7 +143,7 @@ var SelectComponent = (function () {
         if (!isUpMode && e.keyCode === 8) {
             var el = this.element.nativeElement
                 .querySelector('div.ui-select-container > input');
-            if (!el.value || el.value.length <= 0) {
+            if (this.autocomplete && (!el.value || el.value.length <= 0)) {
                 if (this.active.length > 0) {
                     this.remove(this.active[this.active.length - 1]);
                 }
