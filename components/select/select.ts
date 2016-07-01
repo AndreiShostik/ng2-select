@@ -492,6 +492,13 @@ export class SelectComponent implements OnInit {
           this.activeOption = opt;
           this.behavior.updateHighlighted();
         }
+        if (this.optionsOpened === false) {
+          let el = this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+          if (el) {
+            el.focus();
+          }
+          this.open();
+        }
         this.searchTimeout = setTimeout(() => {
           this.searchText = "";
         }, 1000);
