@@ -671,7 +671,9 @@ export class GenericBehavior extends Behavior implements OptionsBehavior {
     if (index === -1) {
       this.first();
     } else {
-      super.ensureHighlightVisible();
+      setTimeout(() => {
+        super.ensureHighlightVisible();
+      }, 0);
     }
   }
 
@@ -761,7 +763,9 @@ export class ChildrenBehavior extends Behavior implements OptionsBehavior {
       this.first();
     } else {
       this.fillOptionsMap();
-      this.ensureHighlightVisible(this.optionsMap);
+      setTimeout(() => {
+        super.ensureHighlightVisible(this.optionsMap);
+      }, 0);
     }
   }
 
