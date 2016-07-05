@@ -339,9 +339,11 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  public clickedOutside():void  {
-    this.inputMode = false;
-    this.optionsOpened = false;
+  public clickedOutside(event: any):void  {
+    if (!this.element.nativeElement.contains(event.data)) {
+      this.inputMode = false;
+      this.optionsOpened = false;
+    }
   }
 
   public get firstItemHasChildren():boolean {
