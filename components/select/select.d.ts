@@ -38,7 +38,7 @@ export declare class SelectComponent implements OnInit {
     ngOnInit(): any;
     remove(item: SelectItem): void;
     doEvent(type: string, value: any): void;
-    clickedOutside(): void;
+    clickedOutside(event: any): void;
     firstItemHasChildren: boolean;
     protected matchClick(e: any): void;
     protected mainClick(event: any): void;
@@ -65,6 +65,7 @@ export declare class GenericBehavior extends Behavior implements OptionsBehavior
     prev(): void;
     next(): void;
     updateHighlighted(): void;
+    selected(): void;
     filter(query: RegExp): void;
 }
 export declare class ChildrenBehavior extends Behavior implements OptionsBehavior {
@@ -74,5 +75,6 @@ export declare class ChildrenBehavior extends Behavior implements OptionsBehavio
     prev(): void;
     next(): void;
     updateHighlighted(): void;
+    selected(): void;
     filter(query: RegExp): void;
 }

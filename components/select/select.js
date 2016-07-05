@@ -201,10 +201,7 @@ var SelectComponent = (function () {
         }
         // enter
         if (!isUpMode && e.keyCode === 13) {
-            if (this.active.indexOf(this.activeOption) === -1) {
-                this.selectActiveMatch();
-                this.behavior.next();
-            }
+            this.selectActiveMatch();
             e.preventDefault();
             return;
         }
@@ -244,9 +241,11 @@ var SelectComponent = (function () {
             this[type].next(value);
         }
     };
-    SelectComponent.prototype.clickedOutside = function () {
-        this.inputMode = false;
-        this.optionsOpened = false;
+    SelectComponent.prototype.clickedOutside = function (event) {
+        if (!this.element.nativeElement.contains(event.data)) {
+            this.inputMode = false;
+            this.optionsOpened = false;
+        }
     };
     Object.defineProperty(SelectComponent.prototype, "firstItemHasChildren", {
         get: function () {
@@ -322,6 +321,13 @@ var SelectComponent = (function () {
                     this.activeOption = opt;
                     this.behavior.updateHighlighted();
                 }
+                if (this.optionsOpened === false) {
+                    var el = this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+                    if (el) {
+                        el.focus();
+                    }
+                    this.open();
+                }
                 this.searchTimeout = setTimeout(function () {
                     _this.searchText = "";
                 }, 1000);
@@ -361,7 +367,7 @@ var SelectComponent = (function () {
             _this.multiple === true &&
                 !_this.active.find(function (o) { return option.text === o.text; })); });
         if (this.options.length > 0) {
-            this.behavior.first();
+            this.behavior.selected();
         }
         this.optionsOpened = true;
     };
@@ -553,6 +559,18 @@ var GenericBehavior = (function (_super) {
     GenericBehavior.prototype.updateHighlighted = function () {
         _super.prototype.ensureHighlightVisible.call(this);
     };
+    GenericBehavior.prototype.selected = function () {
+        var _this = this;
+        var index = this.actor.options.indexOf(this.actor.activeOption);
+        if (index === -1) {
+            this.first();
+        }
+        else {
+            setTimeout(function () {
+                _super.prototype.ensureHighlightVisible.call(_this);
+            }, 0);
+        }
+    };
     GenericBehavior.prototype.filter = function (query) {
         var _this = this;
         var options = this.actor.itemObjects
@@ -628,6 +646,22 @@ var ChildrenBehavior = (function (_super) {
     };
     ChildrenBehavior.prototype.updateHighlighted = function () {
         _super.prototype.ensureHighlightVisible.call(this);
+    };
+    ChildrenBehavior.prototype.selected = function () {
+        var _this = this;
+        var indexParent = this.actor.options
+            .findIndex(function (option) { return _this.actor.activeOption.parent && _this.actor.activeOption.parent.id === option.id; });
+        var index = this.actor.options[indexParent].children
+            .findIndex(function (option) { return _this.actor.activeOption && _this.actor.activeOption.id === option.id; });
+        if (index === -1) {
+            this.first();
+        }
+        else {
+            this.fillOptionsMap();
+            setTimeout(function () {
+                _super.prototype.ensureHighlightVisible.call(_this, _this.optionsMap);
+            }, 0);
+        }
     };
     ChildrenBehavior.prototype.filter = function (query) {
         var options = [];

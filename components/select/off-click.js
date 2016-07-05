@@ -10,11 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var OffClickDirective = (function () {
-    function OffClickDirective() {
+    function OffClickDirective(element) {
+        this.element = element;
     }
     /* tslint:enable */
     OffClickDirective.prototype.onClick = function ($event) {
-        $event.stopPropagation();
+        $event.data = this.element.nativeElement;
     };
     OffClickDirective.prototype.ngOnInit = function () {
         var _this = this;
@@ -37,7 +38,7 @@ var OffClickDirective = (function () {
         core_1.Directive({
             selector: '[offClick]'
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [core_1.ElementRef])
     ], OffClickDirective);
     return OffClickDirective;
 }());

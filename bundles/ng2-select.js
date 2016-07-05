@@ -149,9 +149,11 @@ System.registerDynamic("ng2-select/components/select/off-click", ["@angular/core
   };
   var core_1 = $__require('@angular/core');
   var OffClickDirective = (function() {
-    function OffClickDirective() {}
+    function OffClickDirective(element) {
+      this.element = element;
+    }
     OffClickDirective.prototype.onClick = function($event) {
-      $event.stopPropagation();
+      $event.data = this.element.nativeElement;
     };
     OffClickDirective.prototype.ngOnInit = function() {
       var _this = this;
@@ -164,7 +166,7 @@ System.registerDynamic("ng2-select/components/select/off-click", ["@angular/core
     };
     __decorate([core_1.Input('offClick'), __metadata('design:type', Object)], OffClickDirective.prototype, "offClickHandler", void 0);
     __decorate([core_1.HostListener('click', ['$event']), __metadata('design:type', Function), __metadata('design:paramtypes', [MouseEvent]), __metadata('design:returntype', void 0)], OffClickDirective.prototype, "onClick", null);
-    OffClickDirective = __decorate([core_1.Directive({selector: '[offClick]'}), __metadata('design:paramtypes', [])], OffClickDirective);
+    OffClickDirective = __decorate([core_1.Directive({selector: '[offClick]'}), __metadata('design:paramtypes', [core_1.ElementRef])], OffClickDirective);
     return OffClickDirective;
   }());
   exports.OffClickDirective = OffClickDirective;
@@ -384,10 +386,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
         return;
       }
       if (!isUpMode && e.keyCode === 13) {
-        if (this.active.indexOf(this.activeOption) === -1) {
-          this.selectActiveMatch();
-          this.behavior.next();
-        }
+        this.selectActiveMatch();
         e.preventDefault();
         return;
       }
@@ -426,9 +425,11 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
         this[type].next(value);
       }
     };
-    SelectComponent.prototype.clickedOutside = function() {
-      this.inputMode = false;
-      this.optionsOpened = false;
+    SelectComponent.prototype.clickedOutside = function(event) {
+      if (!this.element.nativeElement.contains(event.data)) {
+        this.inputMode = false;
+        this.optionsOpened = false;
+      }
     };
     Object.defineProperty(SelectComponent.prototype, "firstItemHasChildren", {
       get: function() {
@@ -501,6 +502,13 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
             this.activeOption = opt;
             this.behavior.updateHighlighted();
           }
+          if (this.optionsOpened === false) {
+            var el = this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+            if (el) {
+              el.focus();
+            }
+            this.open();
+          }
           this.searchTimeout = setTimeout(function() {
             _this.searchText = "";
           }, 1000);
@@ -541,7 +549,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
         }));
       });
       if (this.options.length > 0) {
-        this.behavior.first();
+        this.behavior.selected();
       }
       this.optionsOpened = true;
     };
@@ -685,6 +693,17 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     GenericBehavior.prototype.updateHighlighted = function() {
       _super.prototype.ensureHighlightVisible.call(this);
     };
+    GenericBehavior.prototype.selected = function() {
+      var _this = this;
+      var index = this.actor.options.indexOf(this.actor.activeOption);
+      if (index === -1) {
+        this.first();
+      } else {
+        setTimeout(function() {
+          _super.prototype.ensureHighlightVisible.call(_this);
+        }, 0);
+      }
+    };
     GenericBehavior.prototype.filter = function(query) {
       var _this = this;
       var options = this.actor.itemObjects.filter(function(option) {
@@ -758,6 +777,23 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
     };
     ChildrenBehavior.prototype.updateHighlighted = function() {
       _super.prototype.ensureHighlightVisible.call(this);
+    };
+    ChildrenBehavior.prototype.selected = function() {
+      var _this = this;
+      var indexParent = this.actor.options.findIndex(function(option) {
+        return _this.actor.activeOption.parent && _this.actor.activeOption.parent.id === option.id;
+      });
+      var index = this.actor.options[indexParent].children.findIndex(function(option) {
+        return _this.actor.activeOption && _this.actor.activeOption.id === option.id;
+      });
+      if (index === -1) {
+        this.first();
+      } else {
+        this.fillOptionsMap();
+        setTimeout(function() {
+          _super.prototype.ensureHighlightVisible.call(_this, _this.optionsMap);
+        }, 0);
+      }
     };
     ChildrenBehavior.prototype.filter = function(query) {
       var options = [];

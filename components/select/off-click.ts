@@ -27,3 +27,6 @@ export class OffClickDirective implements OnInit, OnDestroy {
   }
 
 }
+export interface MouseEvent {
+  data: any;
+}
