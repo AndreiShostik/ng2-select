@@ -373,10 +373,7 @@ export class SelectComponent implements OnInit {
     }
     // enter
     if (!isUpMode && e.keyCode === 13) {
-      if (this.active.indexOf(this.activeOption) === -1) {
-        this.selectActiveMatch();
-        this.behavior.next();
-      }
+      this.selectActiveMatch();
       e.preventDefault();
       return;
     }
@@ -420,9 +417,11 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  public clickedOutside():void  {
-    this.inputMode = false;
-    this.optionsOpened = false;
+  public clickedOutside(event: any):void  {
+    if (!this.element.nativeElement.contains(event.data)) {
+      this.inputMode = false;
+      this.optionsOpened = false;
+    }
   }
 
   public get firstItemHasChildren():boolean {
@@ -494,6 +493,13 @@ export class SelectComponent implements OnInit {
           this.activeOption = opt;
           this.behavior.updateHighlighted();
         }
+        if (this.optionsOpened === false) {
+          let el = this.element.nativeElement.querySelector('div.ui-select-container .ui-select-match .ui-select-toggle');
+          if (el) {
+            el.focus();
+          }
+          this.open();
+        }
         this.searchTimeout = setTimeout(() => {
           this.searchText = "";
         }, 1000);
@@ -535,7 +541,7 @@ export class SelectComponent implements OnInit {
       !this.active.find((o:SelectItem) => option.text === o.text)));
 
     if (this.options.length > 0) {
-      this.behavior.first();
+      this.behavior.selected();
     }
     this.optionsOpened = true;
   }
@@ -662,6 +668,17 @@ export class GenericBehavior extends Behavior implements OptionsBehavior {
     super.ensureHighlightVisible();
   }
 
+  public selected():void {
+    let index = this.actor.options.indexOf(this.actor.activeOption);
+    if (index === -1) {
+      this.first();
+    } else {
+      setTimeout(() => {
+        super.ensureHighlightVisible();
+      }, 0);
+    }
+  }
+
   public filter(query:RegExp):void {
     let options = this.actor.itemObjects
       .filter((option:SelectItem) => {
@@ -737,6 +754,21 @@ export class ChildrenBehavior extends Behavior implements OptionsBehavior {
 
   public updateHighlighted():void {
     super.ensureHighlightVisible();
+  }
+
+  public selected():void {
+    let indexParent = this.actor.options
+        .findIndex((option:SelectItem) => this.actor.activeOption.parent && this.actor.activeOption.parent.id === option.id);
+    let index = this.actor.options[indexParent].children
+        .findIndex((option:SelectItem) => this.actor.activeOption && this.actor.activeOption.id === option.id);
+    if (index === -1) {
+      this.first();
+    } else {
+      this.fillOptionsMap();
+      setTimeout(() => {
+        super.ensureHighlightVisible(this.optionsMap);
+      }, 0);
+    }
   }
 
   public filter(query:RegExp):void {
