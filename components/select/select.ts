@@ -10,6 +10,17 @@ let styles = `
   background-color: blue;
 }
 
+.caret-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 14px;
+}
+
+.caret-wrapper:hover {
+  background-color: #ccc;
+}
+
 .ui-select-toggle {
   position: relative;
 
@@ -142,7 +153,7 @@ let optionsTemplate = `
               [ngClass]="{'ui-select-allow-clear': allowClear && active.length > 0}"
               [innerHTML]="active[0].text"></span>
         <i class="dropdown-toggle pull-right"></i>
-        <i class="caret pull-right"></i>
+        <span class="caret-wrapper" (click)="open()"><i class="caret pull-right"></i></span>
         <a *ngIf="allowClear && active.length>0" style="margin-right: 10px; padding: 0;"
           (click)="remove(activeOption)" class="close pull-right">
           &times;
@@ -382,7 +393,6 @@ export class SelectComponent implements OnInit {
       this.inputValue = target.value;
       if (this.optionsOpened === false && this.inputValue) {
         this.open();
-        this.focusToInput(this.inputValue);
       }
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
@@ -435,8 +445,12 @@ export class SelectComponent implements OnInit {
     if (this.autocomplete === true) {
       this.inputMode = !this.inputMode;
       if (this.inputMode === true && ((this.multiple === true && e) || this.multiple === false)) {
-        this.focusToInput();
-        this.open();
+        if (this.active.length) {
+          this.focusToInput(this.active[0].text);
+        } else {
+          this.focusToInput();
+          this.open();
+        }
       }
     } else {
       if ((this.multiple === true && e) || this.multiple === false) {
