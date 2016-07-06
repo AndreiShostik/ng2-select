@@ -535,10 +535,10 @@ export class GenericBehavior extends Behavior implements OptionsBehavior {
   }
 
   public selected():void {
-    let index = this.actor.options.indexOf(this.actor.activeOption);
-    if (index === -1) {
+    if (!this.actor.active.length) {
       this.first();
     } else {
+      this.actor.activeOption = this.actor.active[0];
       setTimeout(() => {
         super.ensureHighlightVisible();
       }, 0);
