@@ -438,6 +438,7 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
       configurable: true
     });
     SelectComponent.prototype.matchClick = function(e) {
+      var _this = this;
       if (this._disabled === true) {
         return;
       }
@@ -446,6 +447,10 @@ System.registerDynamic("ng2-select/components/select/select", ["@angular/core", 
         if (this.inputMode === true && ((this.multiple === true && e) || this.multiple === false)) {
           if (this.active.length) {
             this.focusToInput(this.active[0].text);
+            setTimeout(function() {
+              var el = _this.element.nativeElement.querySelector('div.ui-select-container > input');
+              el.setSelectionRange(0, el.value.length);
+            }, 0);
           } else {
             this.focusToInput();
             this.open();
