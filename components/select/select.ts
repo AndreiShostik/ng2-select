@@ -447,6 +447,10 @@ export class SelectComponent implements OnInit {
       if (this.inputMode === true && ((this.multiple === true && e) || this.multiple === false)) {
         if (this.active.length) {
           this.focusToInput(this.active[0].text);
+          setTimeout(() => {
+            let el: any = this.element.nativeElement.querySelector('div.ui-select-container > input');
+            el.setSelectionRange(0, el.value.length);
+          }, 0);
         } else {
           this.focusToInput();
           this.open();
