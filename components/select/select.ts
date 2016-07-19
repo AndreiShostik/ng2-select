@@ -11,10 +11,12 @@ let styles = `
   top: 0;
   right: 0;
   padding: 14px;
+  z-index: 1;
 }
 
 .caret-wrapper:hover {
   background-color: #ccc;
+  cursor: pointer;
 }
 
 .ui-select-toggle {
@@ -72,6 +74,7 @@ let styles = `
 }
 
 .ui-select-multiple input.ui-select-search {
+  padding-right: 40px;
   background-color: transparent !important; /* To prevent double background when disabled */
   border: none;
   outline: none;
@@ -135,6 +138,7 @@ let optionsTemplate = `
      [offClick]="clickedOutside"
      class="ui-select-container dropdown open">
     <div [ngClass]="{'ui-disabled': disabled}"></div>
+    <span class="caret-wrapper" (click)="open()"><i class="caret pull-right"></i></span>
     <div class="ui-select-match"
          *ngIf="!inputMode">
       <span tabindex="-1"
@@ -146,7 +150,6 @@ let optionsTemplate = `
               [ngClass]="{'ui-select-allow-clear': allowClear && active.length > 0}"
               [innerHTML]="active[0].text"></span>
         <i class="dropdown-toggle pull-right"></i>
-        <span class="caret-wrapper" (click)="open()"><i class="caret pull-right"></i></span>
         <a *ngIf="allowClear && active.length>0" style="margin-right: 10px; padding: 0;"
           (click)="remove(activeOption)" class="close pull-right">
           &times;
