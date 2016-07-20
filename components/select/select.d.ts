@@ -45,6 +45,7 @@ export declare class SelectComponent implements OnInit {
     protected selectActive(value: SelectItem): void;
     protected isActive(value: SelectItem): boolean;
     private focusToInput(value?);
+    triggerOpen(e: any): void;
     private open();
     private hideOptions();
     private selectActiveMatch();
