@@ -138,7 +138,7 @@ let optionsTemplate = `
      [offClick]="clickedOutside"
      class="ui-select-container dropdown open">
     <div [ngClass]="{'ui-disabled': disabled}"></div>
-    <span class="caret-wrapper" (click)="open()"><i class="caret pull-right"></i></span>
+    <span class="caret-wrapper" (click)="triggerOpen($event)"><i class="caret pull-right"></i></span>
     <div class="ui-select-match"
          *ngIf="!inputMode">
       <span tabindex="-1"
@@ -429,6 +429,12 @@ export class SelectComponent implements OnInit {
         el.value = value;
       }
     }, 0);
+  }
+
+  public triggerOpen(e: any):void {
+    this.inputMode = false;
+    this.open();
+    this.matchClick(e);
   }
 
   private open():void {
