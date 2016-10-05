@@ -1,7 +1,9 @@
 import { EventEmitter, ElementRef, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
 export declare class SelectComponent implements OnInit {
+    private sanitizer;
     allowClear: boolean;
     placeholder: string;
     idField: string;
@@ -31,7 +33,8 @@ export declare class SelectComponent implements OnInit {
     private _active;
     private searchText;
     private searchTimeout;
-    constructor(element: ElementRef);
+    constructor(element: ElementRef, sanitizer: DomSanitizer);
+    sanitize(html: string): SafeHtml;
     showInput(e: any): void;
     hideInput(e: any): void;
     inputEvent(e: any, isUpMode?: boolean): void;
@@ -39,7 +42,7 @@ export declare class SelectComponent implements OnInit {
     remove(item: SelectItem): void;
     doEvent(type: string, value: any): void;
     clickedOutside(event: any): void;
-    firstItemHasChildren: boolean;
+    readonly firstItemHasChildren: boolean;
     protected matchClick(e: any): void;
     protected mainClick(event: any): void;
     protected selectActive(value: SelectItem): void;

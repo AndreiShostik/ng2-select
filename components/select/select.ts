@@ -344,7 +344,7 @@ export class SelectComponent implements OnInit {
   private _disabled:boolean = false;
   private _active:Array<SelectItem> = [];
   private searchText:string = '';
-  private searchTimeout:number = 0;
+  private searchTimeout:any = 0;
 
   public constructor(element:ElementRef, private sanitizer:DomSanitizer) {
     this.element = element;
