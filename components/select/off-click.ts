@@ -1,4 +1,4 @@
-import {Directive, HostListener, Input, OnInit, OnDestroy} from '@angular/core';
+import { Directive, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
 
 @Directive({
   selector: '[offClick]'
@@ -19,5 +19,4 @@ export class OffClickDirective implements OnInit, OnDestroy {
   public ngOnDestroy(): any {
     document.removeEventListener('click', this.offClickHandler);
   }
-
 }
