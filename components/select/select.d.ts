@@ -18,13 +18,15 @@ export declare class SelectComponent implements OnInit {
     selected: EventEmitter<any>;
     removed: EventEmitter<any>;
     typed: EventEmitter<any>;
+    opened: EventEmitter<any>;
     options: Array<SelectItem>;
     itemObjects: Array<SelectItem>;
     activeOption: SelectItem;
     element: ElementRef;
+    private optionsOpened;
     private preventInputFocus;
     private inputMode;
-    private optionsOpened;
+    private _optionsOpened;
     private behavior;
     private inputValue;
     private _items;

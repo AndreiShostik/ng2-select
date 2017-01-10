@@ -63,7 +63,7 @@ System.registerDynamic('ng2-select/components/select/select', ['@angular/core', 
     var select_item_1 = $__require('./select-item');
     var select_pipes_1 = $__require('./select-pipes');
     var common_1 = $__require('./common');
-    var styles = "\n.active {\n  background-color: blue;\n}\n\n.caret-wrapper {\n  position: absolute;\n  top: 0;\n  right: 0;\n  padding: 14px;\n  z-index: 1;\n}\n\n.caret-wrapper:hover {\n  background-color: #ccc;\n  cursor: pointer;\n}\n  .ui-select-toggle {\n    position: relative;\n  }\n  \n  /* Fix Bootstrap dropdown position when inside a input-group */\n  .input-group > .dropdown {\n    /* Instead of relative */\n    position: static;\n  }\n  \n  .ui-select-match > .btn {\n    /* Instead of center because of .btn */\n    text-align: left !important;\n  }\n  \n  .ui-select-match > .caret {\n    position: absolute;\n    top: 45%;\n    right: 15px;\n  }\n  \n  .ui-disabled {\n    background-color: #eceeef;\n    border-radius: 4px;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    z-index: 5;\n    opacity: 0.6;\n    top: 0;\n    left: 0;\n    cursor: not-allowed;\n  }\n  \n  .ui-select-choices {\n    width: 100%;\n    height: auto;\n    max-height: 200px;\n    overflow-x: hidden;\n    margin-top: 0;\n  }\n  \n  .ui-select-multiple .ui-select-choices {\n    margin-top: 1px;\n  }\n  .ui-select-choices-row>a {\n      display: block;\n      padding: 3px 20px;\n      clear: both;\n      font-weight: 400;\n      line-height: 1.42857143;\n      color: #333;\n      white-space: nowrap;\n  }\n  .ui-select-choices-row.active>a {\n      color: #fff;\n      text-decoration: none;\n      outline: 0;\n      background-color: #428bca;\n  }\n  \n  .ui-select-multiple {\n    height: auto;\n    padding:3px 3px 0 3px;\n  }\n  \n  .ui-select-multiple input.ui-select-search {\n    background-color: transparent !important; /* To prevent double background when disabled */\n    border: none;\n    outline: none;\n    box-shadow: none;\n    height: 1.6666em;\n    padding: 0;\n    margin-bottom: 3px;\n    \n  }\n  .ui-select-match .close {\n      font-size: 1.6em;\n      line-height: 0.75;\n  }\n  \n  .ui-select-multiple .ui-select-match-item {\n    outline: 0;\n    margin: 0 3px 3px 0;\n  }\n  .ui-select-toggle > .caret {\n      position: absolute;\n      height: 10px;\n      top: 50%;\n      right: 10px;\n      margin-top: -2px;\n  }\n";
+    var styles = "\n.active {\n  background-color: blue;\n}\n\n.caret-wrapper {\n  position: absolute;\n  top: 0;\n  right: 0;\n  padding: 14px;\n  z-index: 1;\n}\n\n.caret-wrapper:hover {\n  background-color: #ccc;\n  cursor: pointer;\n}\n  .ui-select-toggle {\n    position: relative;\n  }\n\n  /* Fix caret going into new line in Firefox */\n  .ui-select-placeholder {\n    float: left;\n  }\n  \n  /* Fix Bootstrap dropdown position when inside a input-group */\n  .input-group > .dropdown {\n    /* Instead of relative */\n    position: static;\n  }\n  \n  .ui-select-match > .btn {\n    /* Instead of center because of .btn */\n    text-align: left !important;\n  }\n  \n  .ui-select-match > .caret {\n    position: absolute;\n    top: 45%;\n    right: 15px;\n  }\n  \n  .ui-disabled {\n    background-color: #eceeef;\n    border-radius: 4px;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    z-index: 5;\n    opacity: 0.6;\n    top: 0;\n    left: 0;\n    cursor: not-allowed;\n  }\n  \n  .ui-select-choices {\n    width: 100%;\n    height: auto;\n    max-height: 200px;\n    overflow-x: hidden;\n    margin-top: 0;\n  }\n  \n  .ui-select-multiple .ui-select-choices {\n    margin-top: 1px;\n  }\n  .ui-select-choices-row>a {\n      display: block;\n      padding: 3px 20px;\n      clear: both;\n      font-weight: 400;\n      line-height: 1.42857143;\n      color: #333;\n      white-space: nowrap;\n  }\n  .ui-select-choices-row.active>a {\n      color: #fff;\n      text-decoration: none;\n      outline: 0;\n      background-color: #428bca;\n  }\n  \n  .ui-select-multiple {\n    height: auto;\n    padding:3px 3px 0 3px;\n  }\n  \n  .ui-select-multiple input.ui-select-search {\n    background-color: transparent !important; /* To prevent double background when disabled */\n    border: none;\n    outline: none;\n    box-shadow: none;\n    height: 1.6666em;\n    padding: 0;\n    margin-bottom: 3px;\n    \n  }\n  .ui-select-match .close {\n      font-size: 1.6em;\n      line-height: 0.75;\n  }\n  \n  .ui-select-multiple .ui-select-match-item {\n    outline: 0;\n    margin: 0 3px 3px 0;\n  }\n  .ui-select-toggle > .caret {\n      position: absolute;\n      height: 10px;\n      top: 50%;\n      right: 10px;\n      margin-top: -2px;\n  }\n";
     var SelectComponent = function () {
         function SelectComponent(element, sanitizer) {
             this.sanitizer = sanitizer;
@@ -77,11 +77,12 @@ System.registerDynamic('ng2-select/components/select/select', ['@angular/core', 
             this.selected = new core_1.EventEmitter();
             this.removed = new core_1.EventEmitter();
             this.typed = new core_1.EventEmitter();
+            this.opened = new core_1.EventEmitter();
             this.options = [];
             this.itemObjects = [];
             this.preventInputFocus = false;
             this.inputMode = false;
-            this.optionsOpened = false;
+            this._optionsOpened = false;
             this.inputValue = '';
             this._items = [];
             this._searchItems = [];
@@ -153,6 +154,17 @@ System.registerDynamic('ng2-select/components/select/select', ['@angular/core', 
                         return new select_item_1.SelectItem(data);
                     });
                 }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SelectComponent.prototype, "optionsOpened", {
+            get: function () {
+                return this._optionsOpened;
+            },
+            set: function (value) {
+                this._optionsOpened = value;
+                this.opened.emit(value);
             },
             enumerable: true,
             configurable: true
@@ -487,7 +499,8 @@ System.registerDynamic('ng2-select/components/select/select', ['@angular/core', 
             'data': [{ type: core_1.Output }],
             'selected': [{ type: core_1.Output }],
             'removed': [{ type: core_1.Output }],
-            'typed': [{ type: core_1.Output }]
+            'typed': [{ type: core_1.Output }],
+            'opened': [{ type: core_1.Output }]
         };
         return SelectComponent;
     }();
