@@ -25,6 +25,11 @@ let styles = `
   .ui-select-toggle {
     position: relative;
   }
+
+  /* Fix caret going into new line in Firefox */
+  .ui-select-placeholder {
+    float: left;
+  }
   
   /* Fix Bootstrap dropdown position when inside a input-group */
   .input-group > .dropdown {
@@ -325,6 +330,7 @@ export class SelectComponent implements OnInit {
   @Output() public selected:EventEmitter<any> = new EventEmitter();
   @Output() public removed:EventEmitter<any> = new EventEmitter();
   @Output() public typed:EventEmitter<any> = new EventEmitter();
+  @Output() public opened:EventEmitter<any> = new EventEmitter();
 
   public options:Array<SelectItem> = [];
   public itemObjects:Array<SelectItem> = [];
@@ -335,9 +341,18 @@ export class SelectComponent implements OnInit {
     return this._active;
   }
 
+  private set optionsOpened(value:boolean){
+    this._optionsOpened = value;
+    this.opened.emit(value);
+  }
+
+  private get optionsOpened(): boolean{
+    return this._optionsOpened;
+  }
+
   private preventInputFocus:boolean = false;
   private inputMode:boolean = false;
-  private optionsOpened:boolean = false;
+  private _optionsOpened:boolean = false;
   private behavior:OptionsBehavior;
   private inputValue:string = '';
   private _items:Array<any> = [];
